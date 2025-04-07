@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>E-Wallet | DIFT E-Market</title>
+  <style>
+    body {
+      font-family: 'Roboto', sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #121212;
+      color: #f1f1f1;
+    }
+
+    nav {
+      background-color: #333;
+      padding: 15px 0;
+      display: flex;
+      justify-content: center;
+      gap: 35px;
+      align-items: center;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    }
+
+    nav a {
+      color: #ff4f58;
+      text-decoration: none;
+      font-size: 20px;
+      font-weight: 600;
+      text-transform: uppercase;
+      transition: 0.3s;
+    }
+
+    nav a:hover {
+      color: #ff7f7f;
+      transform: scale(1.1);
+    }
+
+    .banner {
+      background-color: #ff4f58;
+      color: #fff;
+      padding: 50px 0;
+      text-align: center;
+      font-size: 42px;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 3px;
+    }
+
+    .wallet-container {
+      max-width: 800px;
+      margin: 50px auto;
+      padding: 40px;
+      background-color: #1e1e1e;
+      border-radius: 15px;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+    }
+
+    .wallet-balance {
+      font-size: 36px;
+      color: #0f0;
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .actions {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+
+    .actions button {
+      padding: 15px 25px;
+      font-size: 18px;
+      background-color: #ff4f58;
+      color: white;
+      border: none;
+      border-radius: 30px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .actions button:hover {
+      background-color: #e60026;
+      transform: translateY(-3px);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .transaction-history {
+      margin-top: 30px;
+    }
+
+    .transaction-history h3 {
+      color: #ff4f58;
+      font-size: 24px;
+      margin-bottom: 15px;
+    }
+
+    .transaction {
+      background-color: #222;
+      padding: 15px 20px;
+      margin-bottom: 10px;
+      border-radius: 10px;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .credit {
+      color: #0f0;
+    }
+
+    .debit {
+      color: #f00;
+    }
+
+    input[type="number"] {
+      width: 120px;
+      padding: 10px;
+      font-size: 16px;
+      border-radius: 8px;
+      border: 2px solid #555;
+      background-color: #2a2a2a;
+      color: white;
+      text-align: center;
+    }
+
+    @media (max-width: 600px) {
+      .actions {
+        flex-direction: column;
+        align-items: center;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="banner">Your E-Wallet</div>
+
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="cart.html">Cart</a>
+    <a href="profile.html">Profile</a>
+    <a href="orderhistory.html">Order History</a>
+    <a href="orders.html">Shipping</a>
+    <a href="ewallet.html">E-Wallet</a>
+  </nav>
+
+  <div class="wallet-container">
+    <div class="wallet-balance">Balance: $<span id="balance">0</span></div>
+
+    <div class="actions">
+      <input type="number" id="amount" placeholder="Enter amount" />
+      <button onclick="addFunds()">Add Funds</button>
+      <button onclick="withdrawFunds()">Withdraw</button>
+    </div>
+
+    <div class="transaction-history">
+      <h3>Transaction History</h3>
+      <div id="transactions"></div>
+    </div>
+  </div>
+
+  <script>
+    let balance = localStorage.getItem("ewalletBalance")
+      ? parseFloat(localStorage.getItem("ewalletBalance"))
+      : 0;
+    let transactions = JSON.parse(localStorage.getItem("ewalletTransactions")) || [];
+
+    const balanceEl = document.getElementById("balance");
+    const transactionContainer = document.getElementById("transactions");
+
+    function updateWalletDisplay() {
+      balanceEl.textContent = balance.toFixed(2);
+      transactionContainer.innerHTML = transactions
+        .slice()
+        .reverse()
+        .map(
+          (t) => `
+          <div class="transaction">
+            <span>${t.type}</span>
+            <span class="${t.type === 'Credit' ? 'credit' : 'debit'}">
+              ${t.type === 'Credit' ? '+' : '-'}$${t.amount.toFixed(2)}
+            </span>
+          </div>`
+        )
+        .join("");
+    }
+
+    function addFunds() {
+      const amountInput = document.getElementById("amount");
+      const amount = parseFloat(amountInput.value);
+      if (!amount || amount <= 0) {
+        alert("Please enter a valid amount.");
+        return;
+      }
+      balance += amount;
+      transactions.push({ type: "Credit", amount });
+      saveWalletState();
+      updateWalletDisplay();
+      amountInput.value = "";
+    }
+    function withdrawFunds() {
+      const amountInput = document.getElementById("amount");
+      const amount = parseFloat(amountInput.value);
+      if (!amount || amount <= 0 || amount > balance) {
+        alert("Invalid withdrawal amount.");
+        return;
+      }
+      balance -= amount;
+      transactions.push({ type: "Debit", amount });
+      saveWalletState();
+      updateWalletDisplay();
+      amountInput.value = "";
+    }
+
+    function saveWalletState() {
+      localStorage.setItem("ewalletBalance", balance);
+      localStorage.setItem("ewalletTransactions", JSON.stringify(transactions));
+    }
+
+    // Initial render
+    updateWalletDisplay();
+  </script>
+
+</body>
+</html>

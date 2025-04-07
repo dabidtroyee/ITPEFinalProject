@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        /* General reset and body styling */
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #121212;
+            color: #f1f1f1;
+            transition: background-color 0.5s, color 0.5s;
+        }
+
+        /* Navigation Bar */
+        nav {
+            background-color: #333;
+            padding: 15px 0;
+            display: flex;
+            justify-content: center;
+            gap: 35px;
+            align-items: center;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        nav a {
+            color: #ff4f58;
+            text-decoration: none;
+            font-size: 20px;
+            font-weight: 600;
+            text-transform: uppercase;
+            transition: color 0.3s, transform 0.3s;
+        }
+
+        nav a:hover {
+            color: #ff7f7f;
+            transform: scale(1.1);
+        }
+
+        /* Banner */
+        .banner {
+            background-color: #ff4f58;
+            color: #fff;
+            padding: 50px 0;
+            text-align: center;
+            font-size: 42px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Section Styling */
+        section {
+            margin: 50px auto;
+            max-width: 1200px;
+            padding: 40px;
+            border-radius: 15px;
+            background-color: #1e1e1e;
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .section-title {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: #ff4f58;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Gallery Section */
+        .gallery {
+            display: flex;
+            justify-content: center;
+            gap: 25px;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+
+        .product-card {
+            background-color: #222;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            transition: transform 0.3s, box-shadow 0.3s, filter 0.3s;
+            width: 300px;
+            margin-bottom: 20px;
+        }
+
+        .product-card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3);
+            filter: brightness(1.1);
+        }
+
+        .product-card img {
+            width: 100%;
+            height: 200px;
+            border-radius: 10px;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .product-card:hover img {
+            transform: scale(1.05);
+        }
+
+        .product-name {
+            font-size: 22px;
+            font-weight: 600;
+            margin-top: 15px;
+            color: #fff;
+        }
+
+        .product-description {
+            font-size: 16px;
+            margin: 10px 0;
+            color: #aaa;
+        }
+
+        .rating {
+            color: #f0c100;
+            font-size: 20px;
+        }
+
+        button {
+            padding: 15px 30px;
+            font-size: 18px;
+            background-color: #ff4f58;
+            color: #fff;
+            border: none;
+            border-radius: 40px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.3s, box-shadow 0.3s;
+            margin-top: 10px;
+            text-transform: uppercase;
+        }
+
+        button:hover {
+            background-color: #e60026;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Cart Icon Styling */
+        .cart-icon {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 20px 35px;
+            background-color: #ff4f58;
+            color: #fff;
+            border-radius: 50%;
+            font-size: 28px;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+
+        .cart-icon:hover {
+            background-color: #e60026;
+            transform: scale(1.1);
+        }
+
+        /* Modal Styling */
+        .product-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            transition: opacity 0.5s ease;
+        }
+
+        .modal-content {
+            background-color: #222;
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            max-width: 450px;
+            width: 90%;
+        }
+
+        .modal-content img {
+            width: 100%;
+            height: 300px;
+            object-fit: contain;
+            border-radius: 10px;
+        }
+
+        .modal-content h2 {
+            color: #ff4f58;
+            font-size: 28px;
+            margin-top: 20px;
+        }
+
+        .close-btn {
+            background-color: #ff4f58;
+            color: #fff;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        .close-btn:hover {
+            background-color: #e60026;
+        }
+
+        .quantity-selector {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 20px;
+        }
+
+        .quantity-selector input {
+            width: 50px;
+            font-size: 20px;
+            padding: 8px;
+            text-align: center;
+            border-radius: 5px;
+            border: 2px solid #444;
+            margin: 0 10px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .gallery {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+    </style>
+    <title>E-Market Homepage</title>
+</head>
+<body>
+
+    <!-- Banner -->
+    <div class="banner">DIFT Gaming Laptops</div>
+
+    <!-- Navigation Bar -->
+    <nav>
+        <a href="#">Home</a>
+        <a href="#gallery">Products</a>
+        <a href="cart.html">Cart</a>
+        <a href="profile.html">Profile</a>
+        <a href="orderhistory.html">Order History</a>
+        <a href="orders.html.html">Ongoing Shipping</a>
+        <a href="ewallet.html">E-Wallet</a>
+    </nav>
+
+    <!-- Header Section -->
+    <header>
+        <h1>Welcome to Our E-Market</h1>
+        <p>Your one-stop shop for high-performance gaming laptops.</p>
+    </header>
+
+    <!-- Image Gallery Section -->
+    <section id="gallery">
+        <h2 class="section-title">Our Top Products</h2>
+        <div class="gallery">
+            <!-- Product 1 -->
+            <div class="product-card" onclick="viewProduct('Rog 1', 'A powerful laptop for gaming.', '0-2.jpg', 1500, 1300)">
+                <img src="0-2.jpg" alt="ROG OG 1">
+                <div class="product-name">Rog 1</div>
+                <div class="product-description">A powerful laptop for gaming with top-tier performance.</div>
+                <div class="rating">⭐⭐⭐⭐⭐</div>
+                <button>Add to Cart</button>
+            </div>
+            <!-- Product 2 -->
+            <div class="product-card" onclick="viewProduct('ROG Strix G17', 'A sleek gaming laptop with high refresh rate display.', 'Asus-ROG-STRIX-G17-Laptops.png', 1800, 1600)">
+                <img src="Asus-ROG-STRIX-G17-Laptops.png" alt="ROG Strix G17">
+                <div class="product-name">ROG Strix G17</div>
+                <div class="product-description">A sleek gaming laptop with high refresh rate display for smooth gaming.</div>
+                <div class="rating">⭐⭐⭐⭐</div>
+                <button>Add to Cart</button>
+            </div>
+            <!-- Product 3 -->
+            <div class="product-card" onclick="viewProduct('ROG Strix Scar', 'Ultimate performance for serious gamers with premium design.', 'ASUS-ROG-Strix-SCAR-16-and-18-Gaming-Laptops-01.jpeg', 2200, 2000)">
+                <img src="ASUS-ROG-Strix-SCAR-16-and-18-Gaming-Laptops-01.jpeg" alt="ROG Strix Scar">
+                <div class="product-name">ROG Strix Scar</div>
+                <div class="product-description">Ultimate performance for serious gamers with premium design.</div>
+                <div class="rating">⭐⭐⭐⭐⭐</div>
+                <button>Add to Cart</button>
+            </div>
+            <!-- New Product 1 -->
+            <div class="product-card" onclick="viewProduct('Asus TUF', 'Durable and efficient for casual and competitive gamers.', 'TUF-Laptop.jpg', 1000, 850)">
+                <img src="TUF-Laptop.jpg" alt="Asus TUF">
+                <div class="product-name">Asus TUF</div>
+                <div class="product-description">Durable and efficient for casual and competitive gamers.</div>
+                <div class="rating">⭐⭐⭐⭐</div>
+                <button>Add to Cart</button>
+            </div>
+            <!-- New Product 2 -->
+            <div class="product-card" onclick="viewProduct('Alienware M15', 'Stylish and fast with amazing graphics performance.', 'Alienware-M15.jpg', 2400, 2200)">
+                <img src="Alienware-M15.jpg" alt="Alienware M15">
+                <div class="product-name">Alienware M15</div>
+                <div class="product-description">Stylish and fast with amazing graphics performance.</div>
+                <div class="rating">⭐⭐⭐⭐⭐</div>
+                <button>Add to Cart</button>
+            </div>
+            <!-- New Product 3 -->
+            <div class="product-card" onclick="viewProduct('MSI GS66', 'Thin and light with powerful hardware.', 'MSI-GS66.jpg', 2000, 1800)">
+                <img src="MSI-GS66.jpg" alt="MSI GS66">
+                <div class="product-name">MSI GS66</div>
+                <div class="product-description">Thin and light with powerful hardware.</div>
+                <div class="rating">⭐⭐⭐⭐</div>
+                <button>Add to Cart</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Product Modal -->
+    <div id="productModal" class="product-modal">
+        <div class="modal-content">
+            <img id="productImage" src="" alt="Product Image">
+            <h2 id="productTitle"></h2>
+            <p id="productDescription"></p>
+            <div id="productPrice"></div>
+            <div id="productDiscountPrice"></div>
+            <div class="quantity-selector">
+                <label for="quantity">Quantity: </label>
+                <input type="number" id="quantity" value="1" min="1">
+            </div>
+            <button onclick="addToCart()">Add to Cart</button>
+            <button onclick="purchaseNow()">Purchase Now</button>
+            <button class="close-btn" onclick="closeModal()">Close</button>
+        </div>
+    </div>
+
+    <!-- Floating Cart Icon -->
+    <div class="cart-icon" onclick="window.location.href='cart.html'">
+        🛒
+    </div>
+
+    <script>
+        let currentProduct = null;
+
+        // Show product details in the modal
+        function viewProduct(productName, productDesc, productImage, basePrice, discountPrice) {
+            currentProduct = { name: productName, description: productDesc, image: productImage, basePrice: basePrice, discountPrice: discountPrice };
+
+            document.getElementById('productModal').style.display = 'flex';
+            document.getElementById('productTitle').textContent = productName;
+            document.getElementById('productDescription').textContent = productDesc;
+            document.getElementById('productImage').src = productImage;
+            document.getElementById('productPrice').textContent = `Price: $${basePrice}`;
+            document.getElementById('productDiscountPrice').textContent = `Discount Price: $${discountPrice}`;
+        }
+
+        // Close product modal
+        function closeModal() {
+            document.getElementById('productModal').style.display = 'none';
+        }
+
+        // Add product to cart
+        function addToCart() {
+            if (currentProduct) {
+                let cartItems = JSON.parse(localStorage.getItem('cart')) || [];
+                cartItems.push(currentProduct);
+                localStorage.setItem('cart', JSON.stringify(cartItems));
+                alert(`${currentProduct.name} added to cart!`);
+            }
+        }
+
+        // Purchase the product
+        function purchaseNow() {
+            alert(`${currentProduct.name} purchased!`);
+            localStorage.removeItem('cart');  // Clear cart after purchase
+        }
+    </script>
+
+</body>
+</html>

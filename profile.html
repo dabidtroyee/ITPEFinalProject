@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile - E-Market</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="banner">DIFT Gaming Laptops</div>
+
+    <nav>
+        <a href="index.html">Home</a>
+        <a href="cart.html">Cart</a>
+        <a href="profile.html">Profile</a>
+        <a href="orderhistory.html">Order History</a>
+        <a href="orders.html.html">Ongoing Shipping</a>
+        <a href="ewallet.html">E-Wallet</a>
+        <a href="dvlp.html">Developers</a>
+    </nav>
+
+    <section class="profile">
+        <div class="profile-header">
+            <div class="profile-picture">
+                <img id="profileImg" src="https://via.placeholder.com/150" alt="Profile Picture">
+                <button onclick="editProfile()">Edit Profile</button>
+            </div>
+            <div class="profile-info">
+                <h2 id="userName">Welcome, User!</h2>
+                <p id="userEmail">Email: example@example.com</p>
+            </div>
+        </div>
+
+        <div class="profile-edit" id="editProfileSection" style="display:none;">
+            <h3>Edit Profile</h3>
+            <label for="editName">Full Name:</label>
+            <input type="text" id="editName" placeholder="Enter your full name">
+            <label for="editEmail">Email:</label>
+            <input type="email" id="editEmail" placeholder="Enter your email">
+            <label for="editProfilePic">Profile Picture:</label>
+            <input type="file" id="editProfilePic" accept="image/*">
+            <button onclick="saveProfile()">Save Changes</button>
+            <button onclick="cancelEdit()">Cancel</button>
+        </div>
+
+        <div class="purchase-history">
+            <h3>Purchase History</h3>
+            <div id="purchaseList">
+                <!-- Filler purchases -->
+                <div class="purchase-item">
+                    <p><strong>Order #001</strong></p>
+                    <p>Item: Alienware Laptop</p>
+                    <p>Status: Delivered</p>
+                    <p>Date: Jan 15, 2025</p>
+                </div>
+                <div class="purchase-item">
+                    <p><strong>Order #002</strong></p>
+                    <p>Item: Gaming Mouse</p>
+                    <p>Status: Shipped</p>
+                    <p>Date: Feb 10, 2025</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="notifications">
+            <h3>Recent Notifications</h3>
+            <ul id="notificationsList">
+                <li>Your order #002 has shipped.</li>
+                <li>New deals on gaming laptops! Check them out now.</li>
+                <li>Your profile was successfully updated.</li>
+            </ul>
+        </div>
+
+        <button onclick="logout()">Logout</button>
+    </section>
+
+    <script>
+        // Load user data from localStorage if available
+        function loadUserData() {
+            const userData = JSON.parse(localStorage.getItem('userData'));
+
+            if (userData) {
+                document.getElementById('userName').innerText = `Welcome, ${userData.name || 'User'}`;
+                document.getElementById('userEmail').innerText = `Email: ${userData.email}`;
+                if (userData.profilePic) {
+                    document.getElementById('profileImg').src = userData.profilePic;
+                }
+            } else {
+                document.getElementById('userName').innerText = 'Welcome, User';
+                document.getElementById('userEmail').innerText = 'Email: example@example.com';
+            }
+        }
+
+        // Edit profile functionality
+        function editProfile() {
+            const userData = JSON.parse(localStorage.getItem('userData'));
+
+            // Pre-fill the form with current user data
+            if (userData) {
+                document.getElementById('editName').value = userData.name || '';
+                document.getElementById('editEmail').value = userData.email || '';
+            }
+
+            document.getElementById('editProfileSection').style.display = 'block';
+            document.getElementById('profileInfo').style.display = 'none';
+        }
+
+        function saveProfile() {
+            const name = document.getElementById('editName').value;
+            const email = document.getElementById('editEmail').value;
+            const profilePic = document.getElementById('editProfilePic').files[0];
+
+            const userData = JSON.parse(localStorage.getItem('userData')) || {};
+            userData.name = name || userData.name;
+            userData.email = email || userData.email;
+
+            if (profilePic) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    userData.profilePic = e.target.result;
+                    // Save updated data to localStorage
+                    localStorage.setItem('userData', JSON.stringify(userData));
+                    // Update profile image
+                    document.getElementById('profileImg').src = userData.profilePic;
+                }
+                reader.readAsDataURL(profilePic);
+            } else {
+                // Save updated data without changing profile picture
+                localStorage.setItem('userData', JSON.stringify(userData));
+            }
+
+            // Update profile info displayed on page
+            document.getElementById('userName').innerText = `Welcome, ${userData.name}`;
+            document.getElementById('userEmail').innerText = `Email: ${userData.email}`;
+
+            cancelEdit();
+        }
+
+        function cancelEdit() {
+            document.getElementById('editProfileSection').style.display = 'none';
+            document.getElementById('profileInfo').style.display = 'block';
+        }
+
+        // Logout functionality
+        function logout() {
+            localStorage.removeItem('userData');
+            window.location.href = 'login.html'; // Redirect to login after logout
+        }
+
+        // Load user data when page is loaded
+        window.onload = loadUserData;
+    </script>
+
+</body>
+</html>
